@@ -12,7 +12,9 @@ class TileType():
     Tile, Wall, House, Lava, Resource, Shop = range(6)
 
 class  TileContent():
-    Empty, Wall, House, Lava,Resource,Shop, Player = range(7)
+    Empty, Wall, House, Lava, Resource, Shop, Player = range(7)
+    # Empty, Resource, House, Player, Wall, Lava, Shop = range(7)
+    # ^ ordre original
 
 
 class Point(object):
