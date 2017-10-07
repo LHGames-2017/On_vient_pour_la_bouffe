@@ -3,6 +3,7 @@ from flask import Flask, request
 from structs import *
 from random import *
 import json
+import math
 import numpy
 
 
@@ -91,37 +92,121 @@ def bot():
 
     # jour a 10,10
     #print(deserialized_map[10][10].Content)
+    #print(p["CarriedResources"])
+    closestMin = closestMinerals(deserialized_map, x, y)
+    closestH = closestHome(deserialized_map, x, y)
 
-    #closestMinerals(deserialized_map, x, y)
-    #showMap(deserialized_map)
-
-    a = randint(0,3)
-
+    showMap(deserialized_map)
     #print(pos)
-    dirX = 0
-    dirY = 0
-    if a == 0 :
-        dirX = -1
-        dirY = 0
-    elif a == 1 :
-        dirX = 0
-        dirY = -1
-    elif a == 2 :
-        dirX = 1
-        dirY = 0
-    elif a == 3 :
-        dirX = 0
-        dirY = 1
+    #print(closestH[0], closestH[1])
+
+
+    #if isFull(p["CarriedResources"] , p["CarryingCapacity"]) :
+     #   coord = simpleGo(x, y, closestH[0], closestH[1])
+     #   return create_move_action(Point(coord[0], coord[1]))
+    if (abs(x-closestMin[0]) + abs(y-closestMin[1]) == 1):
+        return create_collect_action(Point(closestMin[0], closestMin[1]))
+    else :
+        coord = simpleGo(x, y, closestMin[0], closestMin[1])
+        return create_move_action(Point(coord[0], coord[1]))
+    #print(closestMin[0], closestMin[1])
+
 
     #return decision
-    return create_move_action(Point(x+dirX,y-dirY))
+
+tuiles = (".", "%", "M", "L", "R", "S", "P")
+
+def isFull(carried, total) : # isFull(p["CarriedResources"] , p["CarryingCapacity"])
+    if carried == total:
+        return True
+    else :
+        return False
+
+def simpleGo(xP,yP, x, y) :
+    if abs(xP-x) > abs(yP-y) :
+        if xP > x :
+            return (xP-1, yP)
+        else :
+            return (xP + 1, yP)
+    else :
+        if yP > y :
+            return (xP, yP - 1)
+        else :
+            return (xP, yP + 1)
+
+def closestHome(map, x, y) :
+    p = 10
+    minerais = [(0,0)]
+    minerais.pop(0)
+    for i in range (0,20):
+        for j in range (0,20) :
+            if tuiles[map[i][j].Content] == "M" :
+                minerais.append((i,j))
+
+    minX = -1
+    minY = -1
+    minDistance = 1000
+    for minerai in minerais :
+        distance = math.sqrt((minerai[0] - 10) * (minerai[0] - 10) + (minerai[1] -  10) * (minerai[1] - 10))
+        if distance < minDistance :
+            minDistance = distance
+            minX = minerai[0]
+            minY = minerai[1]
+    if minX == -1 or minY == -1:
+        return (minX, minY)
+    elif minX > 10 :
+        minX = x + minX - p
+    elif minX > 10 :
+        minX = x + minX + p
+    elif minX == 10:
+        minX = x
+
+
+    if minY > 10:
+        minY = y + minY - p
+    elif minY < 10:
+        minY = y + minY + p
+    elif minY == 10:
+        minY = y
+    return (minX, minY)
 
 def closestMinerals(map, x, y) :
-    for x in range (0,20):
-        x
+    p = 10
+    minerais = [(0,0)]
+    minerais.pop(0)
+    for i in range (0,20):
+        for j in range (0,20) :
+            if tuiles[map[i][j].Content] == "R" :
+                minerais.append((i,j))
+
+    minX = -1
+    minY = -1
+    minDistance = 1000
+    for minerai in minerais :
+        distance = math.sqrt((minerai[0] - 10) * (minerai[0] - 10) + (minerai[1] -  10) * (minerai[1] - 10))
+        if distance < minDistance :
+            minDistance = distance
+            minX = minerai[0]
+            minY = minerai[1]
+    if minX == -1 or minY == -1:
+        return (minX, minY)
+    elif minX > 10 :
+        minX = x + minX - p
+    elif minX > 10 :
+        minX = x + minX + p
+    elif minX == 10:
+        minX = x
+
+
+    if minY > 10:
+        minY = y + minY - p
+    elif minY < 10:
+        minY = y + minY + p
+    elif minY == 10:
+        minY = y
+    return (minX, minY)
 
 def showMap(map) :
-    tuiles = (".", "%", "M", "L", "R", "S", "P")
     for x in range(0,20) :
         for y in range (0,20) :
             print (tuiles[int(map[x][y].Content)], end='', )
