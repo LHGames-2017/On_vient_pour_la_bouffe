@@ -1,5 +1,6 @@
 from flask import Flask, request
 from structs import *
+from random import *
 import json
 import numpy
 
@@ -55,7 +56,6 @@ def bot():
     map_json = request.form["map"]
 
     # Player info
-
     encoded_map = map_json.encode()
     map_json = json.loads(encoded_map)
     p = map_json["Player"]
@@ -77,6 +77,8 @@ def bot():
     for player_dict in map_json["OtherPlayers"]:
         for player_name in player_dict.keys():
             player_info = player_dict[player_name]
+            if player_info == 'notAPlayer':
+                continue
             p_pos = player_info["Position"]
             player_info = PlayerInfo(player_info["Health"],
                                      player_info["MaxHealth"],
@@ -84,9 +86,16 @@ def bot():
 
             otherPlayers.append({player_name: player_info })
 
+    a = random()
+    a = int(a*100)
+    print (a)
+    print(pos)
     # return decision
-
-    return create_move_action(Point(0,1))
+    if a%2 == 0:
+        y -= 1
+    if a%2 == 1:
+        x -= 1
+    return create_move_action(Point(x,y))
 
 @app.route("/", methods=["POST"])
 def reponse():
