@@ -1,4 +1,4 @@
-#from __future__ import print_function
+from __future__ import print_function
 from flask import Flask, request
 from structs import *
 from random import *
@@ -91,25 +91,25 @@ def bot():
             otherPlayers.append({player_name: player_info })
 
     # jour a 10,10
-    #print(deserialized_map[10][10].Content)
-    #print(p["CarriedResources"])
+    print(deserialized_map[10][10].Content)
+    print(p["CarriedResources"])
     closestMin = closestMinerals(deserialized_map, x, y)
     closestH = closestHome(deserialized_map, x, y)
 
     showMap(deserialized_map)
-    #print(pos)
-    #print(closestH[0], closestH[1])
+    print(pos)
+    print(closestH[0], closestH[1])
 
 
-    #if isFull(p["CarriedResources"] , p["CarryingCapacity"]) :
-    #    coord = simpleGo(x, y, closestH[0], closestH[1])
-     #   return create_move_action(Point(coord[0], coord[1]))
-    if (abs(x-closestMin[0]) + abs(y-closestMin[1]) == 1):
+    if isFull(p["CarriedResources"] , p["CarryingCapacity"]) :
+        coord = simpleGo(x, y, closestH[0], closestH[1])
+        return create_move_action(Point(coord[0], coord[1]))
+    elif (abs(x-closestMin[0]) + abs(y-closestMin[1]) == 1):
         return create_collect_action(Point(closestMin[0], closestMin[1]))
     else :
         coord = simpleGo(x, y, closestMin[0], closestMin[1])
         return create_move_action(Point(coord[0], coord[1]))
-    #print(closestMin[0], closestMin[1])
+    print(closestMin[0], closestMin[1])
 
 
     #return decision
@@ -152,9 +152,11 @@ def closestHome(map, x, y) :
             minDistance = distance
             minX = minerai[0]
             minY = minerai[1]
+
     if minX == -1 or minY == -1:
         return (minX, minY)
-    elif minX > 10 :
+
+    if minX < 10 :
         minX = x + minX - p
     elif minX > 10 :
         minX = x + minX + p
@@ -209,8 +211,8 @@ def closestMinerals(map, x, y) :
 def showMap(map) :
     for x in range(0,20) :
         for y in range (0,20) :
-            #print (tuiles[int(map[x][y].Content)], end='', )
-       # print("\n", end='')
+            print (tuiles[int(map[x][y].Content)], end='', )
+        print("\n", end='')
 
 @app.route("/", methods=["POST"])
 def reponse():
@@ -220,4 +222,4 @@ def reponse():
     return bot()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=3000)
