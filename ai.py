@@ -1,11 +1,8 @@
 from __future__ import print_function
 from flask import Flask, request
 from structs import *
-from random import *
 import json
-import math
 import numpy
-
 
 
 app = Flask(__name__)
@@ -39,7 +36,7 @@ def deserialize_map(serialized_map):
     serialized_map = serialized_map[1:]
     rows = serialized_map.split('[')
     column = rows[0].split('{')
-    deserialized_map = [[Tile() for x in range(20)] for y in range(20)]
+    deserialized_map = [[Tile() for x in range(40)] for y in range(40)]
     for i in range(len(rows) - 1):
         column = rows[i + 1].split('{')
 
@@ -60,16 +57,17 @@ def bot():
     map_json = request.form["map"]
 
     # Player info
+
     encoded_map = map_json.encode()
     map_json = json.loads(encoded_map)
     p = map_json["Player"]
+    print ("player:{}".format(p))
     pos = p["Position"]
     x = pos["X"]
     y = pos["Y"]
     house = p["HouseLocation"]
     player = Player(p["Health"], p["MaxHealth"], Point(x,y),
-                    Point(house["X"], house["Y"]),
-                    0,
+                    Point(house["X"], house["Y"]), p["Score"],
                     p["CarriedResources"], p["CarryingCapacity"])
 
     # Map
@@ -78,17 +76,14 @@ def bot():
 
     otherPlayers = []
 
-    for player_dict in map_json["OtherPlayers"]:
-        for player_name in player_dict.keys():
-            player_info = player_dict[player_name]
-            if player_info == 'notAPlayer':
-                continue
-            p_pos = player_info["Position"]
-            player_info = PlayerInfo(player_info["Health"],
+    for players in map_json["OtherPlayers"]:
+        player_info = players["Value"]
+        p_pos = player_info["Position"]
+        player_info = PlayerInfo(player_info["Health"],
                                      player_info["MaxHealth"],
                                      Point(p_pos["X"], p_pos["Y"]))
 
-            otherPlayers.append({player_name: player_info })
+        otherPlayers.append(player_info)
 
     # jour a 10,10
     print(deserialized_map[10][10].Content)
@@ -222,4 +217,4 @@ def reponse():
     return bot()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000)
+    app.run(host="0.0.0.0", port=3000, debug=True)
