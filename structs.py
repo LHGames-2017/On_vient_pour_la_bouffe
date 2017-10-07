@@ -1,7 +1,7 @@
 import math
 
 class ActionTypes():
-    DefaultAction, MoveAction, AttackAction, CollectAction, UpgradeAction, StealAction, PurchaseAction, HealingAction = range(8)
+    DefaultAction, MoveAction, AttackAction, CollectAction, UpgradeAction, StealAction, PurchaseAction, HealAction = range(8)
 
 
 class UpgradeType():
