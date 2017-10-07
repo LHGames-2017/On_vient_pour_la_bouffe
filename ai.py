@@ -1,4 +1,4 @@
-from __future__ import print_function
+#from __future__ import print_function
 from flask import Flask, request
 from structs import *
 from random import *
@@ -102,7 +102,7 @@ def bot():
 
 
     #if isFull(p["CarriedResources"] , p["CarryingCapacity"]) :
-     #   coord = simpleGo(x, y, closestH[0], closestH[1])
+    #    coord = simpleGo(x, y, closestH[0], closestH[1])
      #   return create_move_action(Point(coord[0], coord[1]))
     if (abs(x-closestMin[0]) + abs(y-closestMin[1]) == 1):
         return create_collect_action(Point(closestMin[0], closestMin[1]))
@@ -209,8 +209,8 @@ def closestMinerals(map, x, y) :
 def showMap(map) :
     for x in range(0,20) :
         for y in range (0,20) :
-            print (tuiles[int(map[x][y].Content)], end='', )
-        print("\n", end='')
+            #print (tuiles[int(map[x][y].Content)], end='', )
+       # print("\n", end='')
 
 @app.route("/", methods=["POST"])
 def reponse():
