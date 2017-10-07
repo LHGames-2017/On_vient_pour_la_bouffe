@@ -86,16 +86,29 @@ def bot():
 
             otherPlayers.append({player_name: player_info })
 
-    a = random()
-    a = int(a*100)
+    a = randint(0,3)
     print (a)
     print(pos)
     # return decision
-    if a%2 == 0:
-        y -= 1
-    if a%2 == 1:
-        x -= 1
-    return create_move_action(Point(x,y))
+    dirX = 0
+    dirY = 0
+    if a == 0 :
+        dirX = -1
+        dirY = 0
+    elif a == 1 :
+        dirX = 0
+        dirY = -1
+    elif a == 2 :
+        dirX = 1
+        dirY = 0
+    elif a == 3 :
+        dirX = 0
+        dirY = 1
+
+
+    print
+
+    return create_move_action(Point(x+dirX,y+dirY))
 
 @app.route("/", methods=["POST"])
 def reponse():
