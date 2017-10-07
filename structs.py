@@ -1,7 +1,7 @@
 import math
 
 class ActionTypes():
-    DefaultAction, MoveAction, AttackAction, CollectAction, UpgradeAction, StealAction, PurchaseAction = range(7)
+    DefaultAction, MoveAction, AttackAction, CollectAction, UpgradeAction, StealAction, PurchaseAction, HealAction = range(8)
 
 
 class UpgradeType():
@@ -11,9 +11,10 @@ class UpgradeType():
 class TileType():
     Tile, Wall, House, Lava, Resource, Shop = range(6)
 
-
-class TileContent():
-    Empty, Resource, House, Player, Wall, Lava, Shop = range(7)
+class  TileContent():
+    Empty, Wall, House, Lava, Resource, Shop, Player = range(7)
+    # Empty, Resource, House, Player, Wall, Lava, Shop = range(7)
+    # ^ ordre original
 
 
 class Point(object):
@@ -81,4 +82,4 @@ class ActionContent(object):
 
     def __init__(self, action_name, content):
         self.ActionName = action_name
-        self.Content = {}
+        self.Content = str(content)

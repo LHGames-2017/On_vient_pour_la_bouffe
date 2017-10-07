@@ -1,7 +1,11 @@
+from __future__ import print_function
 from flask import Flask, request
 from structs import *
+from random import *
 import json
 import numpy
+
+
 
 app = Flask(__name__)
 
@@ -34,7 +38,7 @@ def deserialize_map(serialized_map):
     serialized_map = serialized_map[1:]
     rows = serialized_map.split('[')
     column = rows[0].split('{')
-    deserialized_map = [[Tile() for x in range(40)] for y in range(40)]
+    deserialized_map = [[Tile() for x in range(20)] for y in range(20)]
     for i in range(len(rows) - 1):
         column = rows[i + 1].split('{')
 
@@ -55,7 +59,6 @@ def bot():
     map_json = request.form["map"]
 
     # Player info
-
     encoded_map = map_json.encode()
     map_json = json.loads(encoded_map)
     p = map_json["Player"]
@@ -65,6 +68,7 @@ def bot():
     house = p["HouseLocation"]
     player = Player(p["Health"], p["MaxHealth"], Point(x,y),
                     Point(house["X"], house["Y"]),
+                    0,
                     p["CarriedResources"], p["CarryingCapacity"])
 
     # Map
@@ -76,6 +80,8 @@ def bot():
     for player_dict in map_json["OtherPlayers"]:
         for player_name in player_dict.keys():
             player_info = player_dict[player_name]
+            if player_info == 'notAPlayer':
+                continue
             p_pos = player_info["Position"]
             player_info = PlayerInfo(player_info["Health"],
                                      player_info["MaxHealth"],
@@ -83,8 +89,43 @@ def bot():
 
             otherPlayers.append({player_name: player_info })
 
-    # return decision
-    return create_move_action(Point(0,1))
+    # jour a 10,10
+    #print(deserialized_map[10][10].Content)
+
+    #closestMinerals(deserialized_map, x, y)
+    #showMap(deserialized_map)
+
+    a = randint(0,3)
+
+    #print(pos)
+    dirX = 0
+    dirY = 0
+    if a == 0 :
+        dirX = -1
+        dirY = 0
+    elif a == 1 :
+        dirX = 0
+        dirY = -1
+    elif a == 2 :
+        dirX = 1
+        dirY = 0
+    elif a == 3 :
+        dirX = 0
+        dirY = 1
+
+    #return decision
+    return create_move_action(Point(x+dirX,y-dirY))
+
+def closestMinerals(map, x, y) :
+    for x in range (0,20):
+        x
+
+def showMap(map) :
+    tuiles = (".", "%", "M", "L", "R", "S", "P")
+    for x in range(0,20) :
+        for y in range (0,20) :
+            print (tuiles[int(map[x][y].Content)], end='', )
+        print("\n", end='')
 
 @app.route("/", methods=["POST"])
 def reponse():
@@ -94,4 +135,4 @@ def reponse():
     return bot()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000)
+    app.run(host="0.0.0.0", port=8080)
