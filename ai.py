@@ -1,8 +1,11 @@
+from __future__ import print_function
 from flask import Flask, request
 from structs import *
 from random import *
 import json
 import numpy
+
+
 
 app = Flask(__name__)
 
@@ -86,10 +89,15 @@ def bot():
 
             otherPlayers.append({player_name: player_info })
 
+    # jour a 10,10
+    #print(deserialized_map[10][10].Content)
+
+    #closestMinerals(deserialized_map, x, y)
+    #showMap(deserialized_map)
+
     a = randint(0,3)
-    print (a)
-    print(pos)
-    # return decision
+
+    #print(pos)
     dirX = 0
     dirY = 0
     if a == 0 :
@@ -105,10 +113,19 @@ def bot():
         dirX = 0
         dirY = 1
 
+    #return decision
+    return create_move_action(Point(x+dirX,y-dirY))
 
-    print
+def closestMinerals(map, x, y) :
+    for x in range (0,20):
+        x
 
-    return create_move_action(Point(x+dirX,y+dirY))
+def showMap(map) :
+    tuiles = (".", "%", "M", "L", "R", "S", "P")
+    for x in range(0,20) :
+        for y in range (0,20) :
+            print (tuiles[int(map[x][y].Content)], end='', )
+        print("\n", end='')
 
 @app.route("/", methods=["POST"])
 def reponse():
