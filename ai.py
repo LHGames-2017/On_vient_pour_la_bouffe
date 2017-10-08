@@ -1,4 +1,4 @@
-#from __future__ import #print_function
+from __future__ import print_function
 from flask import Flask, request
 from structs import *
 import json
@@ -61,7 +61,7 @@ def bot():
     encoded_map = map_json.encode()
     map_json = json.loads(encoded_map)
     p = map_json["Player"]
-    #print ("player:{}".format(p))
+    print ("player:{}".format(p))
     pos = p["Position"]
     x = pos["X"]
     y = pos["Y"]
@@ -87,33 +87,52 @@ def bot():
 
     # jour a 10,10
 
-    #print(deserialized_map[10][10].Content)
-    #print(p["CarriedResources"])
+    print(deserialized_map[10][10].Content)
+    print(p["CarriedResources"])
     closestMin = closestMinerals(deserialized_map, x, y)
     closestH = closestHome(deserialized_map, x, y)
 
     showMap(deserialized_map)
-    #print("joueur", pos)
-    #print("Maison", closestH[0], closestH[1])
-    #print("mine", closestMin[0], closestMin[1])
+    print("joueur", pos)
+    print("Maison", closestH[0], closestH[1])
+    print("mine", closestMin[0], closestMin[1])
+    print("Score",p["Score"])
 
 
     if isFull(p["CarriedResources"] , p["CarryingCapacity"]) :
-        #print("home")
-        coord = simpleGo(x, y, closestH[0], closestH[1])
-        return create_move_action(Point(coord[0], coord[1]))
+        print("home")
+        if x == closestH[0] and y == closestH[1]:
+            print("Deposit in home")
+        else :
+            coord = simpleGo(x, y, closestH[0], closestH[1])
+            if tileIsWall(deserialized_map, coord[0], coord[1]):
+                return create_attack_action(Point(coord[0], coord[1]))
+            else:
+                return create_move_action(Point(coord[0], coord[1]))
+
     elif (abs(x-closestMin[0]) + abs(y-closestMin[1]) == 1):
-        #print("mining")
+        print("mining")
         return create_collect_action(Point(closestMin[0], closestMin[1]))
+
     else :
-        #print("going mine")
+        print("going mine")
         coord = simpleGo(x, y, closestMin[0], closestMin[1])
-        return create_move_action(Point(coord[0], coord[1]))
+        if tileIsWall(deserialized_map, coord[0], coord[1]):
+            return create_attack_action(Point(coord[0], coord[1]))
+        else :
+            return create_move_action(Point(coord[0], coord[1]))
 
 
     #return decision
 
 tuiles = (".", "%", "M", "L", "R", "S", "P")
+
+def tileIsWall (map,x,y):
+    if tuiles[map[10 + x][10 + y].Content] == "%":
+        return True
+    return False
+
+
 
 def isFull(carried, total) : # isFull(p["CarriedResources"] , p["CarryingCapacity"])
     if carried == total:
@@ -215,9 +234,8 @@ def closestMinerals(map, x, y) :
 def showMap(map) :
     for x in range(0,20) :
         for y in range (0,20) :
-            y
-            #print (tuiles[int(map[x][y].Content)], end='', )
-        #print("\n", end='')
+            print (tuiles[int(map[x][y].Content)], end='', )
+        print("\n", end='')
 
 @app.route("/", methods=["POST"])
 def reponse():
@@ -227,4 +245,4 @@ def reponse():
     return bot()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
